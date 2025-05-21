@@ -9,23 +9,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
+    height: 100vh;
     background-color: #f0f0f0;
   }
   .timer-container {
     text-align: center;
     background-color: #fff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    max-width: 450px;
+    width: 80%;
   }
   h1 {
-    font-size: 4rem;
+    font-size: 2.5rem;
     font-weight: 400;
   }
   .workdays {
-    font-size: 3em;
+    font-size: 2rem;
     color: forestgreen;
     font-weight: bold;
   }
