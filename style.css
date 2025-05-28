@@ -9,9 +9,19 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 30px;
     height: 100vh;
     background-color: #f0f0f0;
   }
+
+  .daily-phrase {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    width: 70%;
+  }
+
   .timer-container {
     text-align: center;
     background-color: #fff;
