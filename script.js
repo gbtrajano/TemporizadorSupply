@@ -1,6 +1,6 @@
 function updateTimer() {
     const now = new Date();
-    const targetDate = new Date('2025-10-20T12:00:00');
+    const targetDate = new Date('2025-10-20T12:00:00'); // Target date set to 12:00
 
     // Calculate total time difference
     const timeDiff = targetDate - now;
@@ -9,7 +9,7 @@ function updateTimer() {
       document.getElementById('workdays').textContent = '0 dias úteis restantes';
       document.querySelector(".daily-phrase span").textContent = 'Nenhuma frase disponível.'; // Or a default message
       return;
-      }
+    }
 
     // Calculate days, hours, minutes, seconds
     const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
@@ -25,13 +25,18 @@ function updateTimer() {
       `${seconds.toString().padStart(2, '0')} segundos`;
 
     // Calculate workdays (Monday to Friday, excluding vacation and holiday)
-    let current = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start at midnight
-    const end = new Date('2025-10-20T09:00:00');
+    let current = new Date(now);
+    // Adjust current to use 12:00 as the day boundary
+    if (current.getHours() < 12) {
+      current.setDate(current.getDate() - 1); // Consider previous day if before 12:00
+    }
+    current.setHours(12, 0, 0, 0); // Set to 12:00:00.000 of the current day
+    const end = new Date('2025-10-20T12:00:00'); // End at 12:00
     let workdays = 0;
 
-    const vacationStart = new Date('2025-08-01T00:00:00');
-    const vacationEnd = new Date('2025-08-31T23:59:59');
-    const holiday = new Date('2025-06-19T00:00:00'); // Placeholder: June 15, 2025 (Sunday)
+    const vacationStart = new Date('2025-08-01T12:00:00');
+    const vacationEnd = new Date('2025-08-31T12:00:00');
+    const holiday = new Date('2025-06-15T12:00:00'); // Adjusted to 12:00
 
     while (current < end) {
       const isWeekday = current.getDay() !== 0 && current.getDay() !== 6; // Not Saturday (6) or Sunday (0)
@@ -51,13 +56,13 @@ function updateTimer() {
 
     // Now call the function to update the phrase using the calculated workdays
     updateDailyPhrase(workdays);
-  }
+}
 
-  // Define a global variable to store the phrases once loaded
-  let globalFrasesArray = [];
+// Define a global variable to store the phrases once loaded
+let globalFrasesArray = [];
 
-  // Function to load phrases from JSON
-  async function carregarFrasesArray() {
+// Function to load phrases from JSON
+async function carregarFrasesArray() {
     try {
       const response = await fetch('frases.json'); // Path to your JSON file
       if (!response.ok) {
@@ -69,10 +74,10 @@ function updateTimer() {
     } catch (error) {
       console.error("Não foi possível carregar as frases:", error);
     }
-  }
+}
 
-  // Function to update the daily phrase based on workdays
-  function updateDailyPhrase(workdaysRemaining) {
+// Function to update the daily phrase based on workdays
+function updateDailyPhrase(workdaysRemaining) {
     if (globalFrasesArray.length > 0) {
       // Use modulo to ensure the index is within the array bounds
       const index = workdaysRemaining % globalFrasesArray.length;
@@ -81,11 +86,11 @@ function updateTimer() {
     } else {
       document.querySelector(".daily-phrase").textContent = 'Carregando frases...';
     }
-  }
+}
 
-  // Load phrases first
-  carregarFrasesArray();
+// Load phrases first
+carregarFrasesArray();
 
-  // Update timer immediately and then every second
-  // Note: updateTimer will call updateDailyPhrase
-  setInterval(updateTimer, 1000);
+// Update timer immediately and then every second
+// Note: updateTimer will call updateDailyPhrase
+setInterval(updateTimer, 1000);
