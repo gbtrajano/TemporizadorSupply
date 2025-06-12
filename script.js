@@ -1,6 +1,6 @@
 function updateTimer() {
     const now = new Date();
-    const targetDate = new Date('2025-10-20T00:00:00');
+    const targetDate = new Date('2025-10-20T12:00:00');
 
     // Calculate total time difference
     const timeDiff = targetDate - now;
@@ -26,12 +26,12 @@ function updateTimer() {
 
     // Calculate workdays (Monday to Friday, excluding vacation and holiday)
     let current = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start at midnight
-    const end = new Date('2025-10-20T00:00:00');
+    const end = new Date('2025-10-20T09:00:00');
     let workdays = 0;
 
     const vacationStart = new Date('2025-08-01T00:00:00');
     const vacationEnd = new Date('2025-08-31T23:59:59');
-    const holiday = new Date('2025-06-15T00:00:00'); // Placeholder: June 15, 2025 (Sunday)
+    const holiday = new Date('2025-06-19T00:00:00'); // Placeholder: June 15, 2025 (Sunday)
 
     while (current < end) {
       const isWeekday = current.getDay() !== 0 && current.getDay() !== 6; // Not Saturday (6) or Sunday (0)
