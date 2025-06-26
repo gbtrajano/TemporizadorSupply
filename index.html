@@ -1,78 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="clock.png" type="image/x-icon">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="clock.png" type="image/x-icon" />
     <title>Contador de Dias Úteis</title>
     <!-- Inclui o Tailwind CSS para estilização fácil e responsiva -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Define a fonte Inter para o corpo da página */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Cor de fundo cinza claro */
-        }
+      /* Define a fonte Inter para o corpo da página */
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f0f4f8; /* Cor de fundo cinza claro */
+      }
     </style>
-</head>
-<body class="flex items-center justify-center min-h-screen p-4">
+  </head>
+  <body class="flex items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full text-center">
-        <!-- Título principal do contador -->
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">FIM DA CLT</h1>
-        <!-- Área de exibição do resultado -->
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-6" role="alert">
-            <p class="font-bold text-2xl" id="businessDaysCount">
-                Calculando...
-            </p>
-            <p class="timer-display font-bold"></p>
-        </div>
-        <!-- Área de exibição da frase motivacional -->
-        <div class="bg-gray-100 border-l-4 border-gray-500 text-black p-4 rounded-md">
-            <p class="text-lg italic" id="motivationalQuote">
-                Carregando frase...
-            </p>
-        </div>
+      <!-- Título principal do contador -->
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">FIM DA CLT</h1>
+      <!-- Área de exibição do resultado -->
+      <div
+        class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-6"
+        role="alert"
+      >
+        <p class="font-bold text-2xl" id="businessDaysCount">Calculando...</p>
+        <p class="timer-display font-bold"></p>
+      </div>
+      <!-- Área de exibição da frase motivacional -->
+      <div
+        class="bg-gray-100 border-l-4 border-gray-500 text-black p-4 rounded-md"
+      >
+        <p class="text-lg italic" id="motivationalQuote">Carregando frase...</p>
+      </div>
     </div>
 
     <script>
+      // TIMER
+      document.addEventListener("DOMContentLoaded", function () {
+        const timerDisplay = document.querySelector(".timer-display");
 
-        // TIMER
-        document.addEventListener('DOMContentLoaded', function() {
-        const timerDisplay = document.querySelector('.timer-display')
+        function startTimer() {
+          // Define o horário de início (8:00:00)
+          const now = new Date();
+          const startTime = new Date();
+          startTime.setHours(8, 0, 0, 0);
 
-    function startTimer() {
-        // Define o horário de início (8:00:00)
-        const now = new Date();
-        const startTime = new Date();
-        startTime.setHours(8, 0, 0, 0);
-
-        // Se já passou das 8h, define para 8h do próximo dia
-        if (now > startTime) {
+          // Se já passou das 8h, define para 8h do próximo dia
+          if (now > startTime) {
             startTime.setDate(startTime.getDate() + 1);
-        }
+          }
 
-        // Duração do temporizador: 4 horas (em milissegundos)
-        const endTime = new Date();
-        endTime.setHours(12, 0, 0, 0); // 12:00:00
+          // Duração do temporizador: 4 horas (em milissegundos)
+          const endTime = new Date();
+          endTime.setHours(12, 0, 0, 0); // 12:00:00
 
-        function updateTimer() {
+          function updateTimer() {
             const currentTime = new Date().getTime();
             const timeLeft = endTime - currentTime;
 
             if (timeLeft <= 0) {
-                // Temporizador terminou, reinicia no próximo dia
-                startTimer();
-                return;
+              // Temporizador terminou, reinicia no próximo dia
+              startTimer();
+              return;
             }
 
             // Calcula horas, minutos e segundos restantes
             const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const minutes = Math.floor(
+              (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
+            );
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
             // Formata o tempo com dois dígitos
-            const formattedTime = 
-                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+              minutes
+            ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
             // Atualiza o display
             timerDisplay.textContent = `${formattedTime}`;
@@ -81,161 +84,175 @@
             const nextStart = new Date(startTime);
             nextStart.setDate(startTime.getDate() + 1);
             if (currentTime >= nextStart.getTime()) {
-                startTimer();
-                return;
+              startTimer();
+              return;
             }
+          }
+
+          // Atualiza o temporizador a cada segundo
+          updateTimer();
+          const timerInterval = setInterval(updateTimer, 1000);
         }
 
-        // Atualiza o temporizador a cada segundo
-        updateTimer();
-        const timerInterval = setInterval(updateTimer, 1000);
-    }
+        // Inicia o temporizador
+        startTimer();
+      });
+      //  /TIMER
+      let frases = []; // Variável para armazenar as frases carregadas
 
-    // Inicia o temporizador
-    startTimer();
-});
-        //  /TIMER
-        let frases = []; // Variável para armazenar as frases carregadas
+      /**
+       * Carrega as frases do arquivo JSON.
+       * @returns {Promise<void>} - Uma promessa que resolve quando as frases são carregadas.
+       */
+      async function loadFrases() {
+        try {
+          // Faz uma requisição para o arquivo frases.json
+          const response = await fetch("frases.json");
+          // Converte a resposta para JSON
+          frases = await response.json();
+        } catch (error) {
+          // Em caso de erro ao carregar as frases, exibe uma mensagem no console
+          console.error("Erro ao carregar as frases:", error);
+          document.getElementById("motivationalQuote").textContent =
+            "Não foi possível carregar as frases.";
+        }
+      }
 
-        /**
-         * Carrega as frases do arquivo JSON.
-         * @returns {Promise<void>} - Uma promessa que resolve quando as frases são carregadas.
-         */
-        async function loadFrases() {
-            try {
-                // Faz uma requisição para o arquivo frases.json
-                const response = await fetch('frases.json');
-                // Converte a resposta para JSON
-                frases = await response.json();
-            } catch (error) {
-                // Em caso de erro ao carregar as frases, exibe uma mensagem no console
-                console.error("Erro ao carregar as frases:", error);
-                document.getElementById('motivationalQuote').textContent = "Não foi possível carregar as frases.";
-            }
+      /**
+       * Verifica se uma determinada data é um dia útil,
+       * considerando fins de semana, feriados e meses não trabalhados.
+       * @param {Date} date - O objeto Date a ser verificado.
+       * @returns {boolean} - Retorna true se for um dia útil, false caso contrário.
+       */
+      function isBusinessDay(date) {
+        const dayOfWeek = date.getDay(); // 0 = Domingo, 6 = Sábado
+        const year = date.getFullYear();
+        const month = date.getMonth(); // 0 = Janeiro, 11 = Dezembro (ex: Junho é 5, Agosto é 7)
+        const day = date.getDate();
+
+        // 1. Verifica se é fim de semana (Sábado ou Domingo)
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          return false;
         }
 
-        /**
-         * Verifica se uma determinada data é um dia útil,
-         * considerando fins de semana, feriados e meses não trabalhados.
-         * @param {Date} date - O objeto Date a ser verificado.
-         * @returns {boolean} - Retorna true se for um dia útil, false caso contrário.
-         */
-        function isBusinessDay(date) {
-            const dayOfWeek = date.getDay(); // 0 = Domingo, 6 = Sábado
-            const year = date.getFullYear();
-            const month = date.getMonth(); // 0 = Janeiro, 11 = Dezembro (ex: Junho é 5, Agosto é 7)
-            const day = date.getDate();
-
-            // 1. Verifica se é fim de semana (Sábado ou Domingo)
-            if (dayOfWeek === 0 || dayOfWeek === 6) {
-                return false;
-            }
-
-            // 3. Verifica feriado específico: 4 de Julho de 2025
-            if (year === 2025 && month === 6 && day === 4) {
-                return false;
-            }
-
-            // 4. Verifica feriado específico: 7 de Julho de 2025
-            if (year === 2025 && month === 6 && day === 7) {
-                return false;
-            }
-
-            // 5. Verifica feriado específico: 15 de Julho de 2025
-            if (year === 2025 && month === 6 && day === 15) {
-                return false;
-            }
-
-            // 6. Verifica mês não trabalhado: Agosto de 2025
-            if (year === 2025 && month === 7) {
-                return false;
-            }
-
-            // Se passou por todas as verificações, é um dia útil
-            return true;
+        // 2. Verifica feriado específico: 27 de Junho de 2025
+        if (year === 2025 && month === 5 && day === 27) {
+          return false;
         }
 
-        /**
-         * Calcula o número de dias úteis entre a data atual e a data final,
-         * aplicando as regras de feriados, meses não trabalhados e o corte ao meio-dia.
-         * @returns {number} - O número total de dias úteis.
-         */
-        function calculateBusinessDays() {
-            const today = new Date();
-            const now = new Date(); // Objeto Date para obter a hora atual para a regra do meio-dia
-
-            // Define a data final para o cálculo (20 de Outubro de 2025)
-            const endDate = new Date(2025, 9, 20); // Mês é 0-indexado, então 9 é Outubro
-            endDate.setHours(0, 0, 0, 0); // Zera as horas/minutos/segundos para comparação de datas
-
-            let businessDays = 0;
-            // Cria uma nova data representando o início do dia de hoje
-            let startDateForCounting = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-            // Aplica a regra "meio-dia" para o dia atual:
-            // Se a hora atual for 12:00 PM (meio-dia) ou depois,
-            // E o dia de hoje seria um dia útil (antes da regra do meio-dia),
-            // Então, a contagem efetivamente começa a partir do próximo dia.
-            if (now.getHours() >= 12 && isBusinessDay(startDateForCounting)) {
-                startDateForCounting.setDate(startDateForCounting.getDate() + 1);
-            }
-
-            // `currentDate` será a data que iteraremos, começando do `startDateForCounting` ajustado
-            let currentDate = new Date(startDateForCounting);
-
-            // Loop através de cada dia, do início ajustado até a data final
-            while (currentDate <= endDate) {
-                // Se o dia atual da iteração for um dia útil, incrementa o contador
-                if (isBusinessDay(currentDate)) {
-                    businessDays++;
-                }
-                // Avança para o próximo dia
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-
-            return businessDays;
+        // 3. Verifica feriado específico: 4 de Julho de 2025
+        if (year === 2025 && month === 6 && day === 4) {
+          return false;
         }
 
-        /**
-         * Exibe o resultado do cálculo e a data/hora da última atualização na interface,
-         * e também seleciona e exibe a frase motivacional.
-         */
-        async function displayResults() {
-            // Garante que as frases sejam carregadas antes de tentar exibi-las
-            if (frases.length === 0) {
-                await loadFrases();
-            }
-
-            const count = calculateBusinessDays();
-            document.getElementById('businessDaysCount').textContent = `${count} DIAS`;
-
-            // Lógica para exibir a frase baseada nos dias úteis restantes
-            // O número de frases no arquivo frases.json é 82
-            // A frase deve ser selecionada de forma que, no último dia útil, a frase seja a última do array
-            // e no dia 82, seja a primeira.
-            const totalFrases = frases.length;
-            if (totalFrases > 0) {
-                // Calcula o índice da frase: (Total de frases - dias úteis restantes)
-                // Se faltam 82 dias, o índice é 0 (82 - 82). Se falta 1 dia, o índice é 81 (82 - 1).
-                let quoteIndex = totalFrases - count;
-
-                // Garante que o índice esteja dentro dos limites do array
-                if (quoteIndex < 0) {
-                    quoteIndex = 0; // Se os dias úteis forem mais que o número de frases, exibe a primeira
-                } else if (quoteIndex >= totalFrases) {
-                    quoteIndex = totalFrases - 1; // Se os dias úteis forem menos que 1, exibe a última
-                }
-                document.getElementById('motivationalQuote').textContent = frases[quoteIndex];
-            } else {
-                document.getElementById('motivationalQuote').textContent = "Nenhuma frase disponível.";
-            }
+        // 4. Verifica feriado específico: 7 de Julho de 2025
+        if (year === 2025 && month === 6 && day === 7) {
+          return false;
         }
 
-        // Chama a função displayResults quando a janela é totalmente carregada
-        window.onload = displayResults;
+        // 5. Verifica feriado específico: 15 de Julho de 2025
+        if (year === 2025 && month === 6 && day === 3) {
+          return false;
+        }
 
-        // Opcional: Atualizar o contador a cada minuto (descomente se desejar atualização automática)
-        // setInterval(displayResults, 60 * 1000);
+        // 6. Verifica mês não trabalhado: Agosto de 2025
+        if (year === 2025 && month === 7) {
+          return false;
+        }
+
+        // Se passou por todas as verificações, é um dia útil
+        return true;
+      }
+
+      /**
+       * Calcula o número de dias úteis entre a data atual e a data final,
+       * aplicando as regras de feriados, meses não trabalhados e o corte ao meio-dia.
+       * @returns {number} - O número total de dias úteis.
+       */
+      function calculateBusinessDays() {
+        const today = new Date();
+        const now = new Date(); // Objeto Date para obter a hora atual para a regra do meio-dia
+
+        // Define a data final para o cálculo (20 de Outubro de 2025)
+        const endDate = new Date(2025, 9, 20); // Mês é 0-indexado, então 9 é Outubro
+        endDate.setHours(0, 0, 0, 0); // Zera as horas/minutos/segundos para comparação de datas
+
+        let businessDays = 0;
+        // Cria uma nova data representando o início do dia de hoje
+        let startDateForCounting = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate()
+        );
+
+        // Aplica a regra "meio-dia" para o dia atual:
+        // Se a hora atual for 12:00 PM (meio-dia) ou depois,
+        // E o dia de hoje seria um dia útil (antes da regra do meio-dia),
+        // Então, a contagem efetivamente começa a partir do próximo dia.
+        if (now.getHours() >= 12 && isBusinessDay(startDateForCounting)) {
+          startDateForCounting.setDate(startDateForCounting.getDate() + 1);
+        }
+
+        // `currentDate` será a data que iteraremos, começando do `startDateForCounting` ajustado
+        let currentDate = new Date(startDateForCounting);
+
+        // Loop através de cada dia, do início ajustado até a data final
+        while (currentDate <= endDate) {
+          // Se o dia atual da iteração for um dia útil, incrementa o contador
+          if (isBusinessDay(currentDate)) {
+            businessDays++;
+          }
+          // Avança para o próximo dia
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return businessDays;
+      }
+
+      /**
+       * Exibe o resultado do cálculo e a data/hora da última atualização na interface,
+       * e também seleciona e exibe a frase motivacional.
+       */
+      async function displayResults() {
+        // Garante que as frases sejam carregadas antes de tentar exibi-las
+        if (frases.length === 0) {
+          await loadFrases();
+        }
+
+        const count = calculateBusinessDays();
+        document.getElementById(
+          "businessDaysCount"
+        ).textContent = `${count} DIAS`;
+
+        // Lógica para exibir a frase baseada nos dias úteis restantes
+        // O número de frases no arquivo frases.json é 82
+        // A frase deve ser selecionada de forma que, no último dia útil, a frase seja a última do array
+        // e no dia 82, seja a primeira.
+        const totalFrases = frases.length;
+        if (totalFrases > 0) {
+          // Calcula o índice da frase: (Total de frases - dias úteis restantes)
+          // Se faltam 82 dias, o índice é 0 (82 - 82). Se falta 1 dia, o índice é 81 (82 - 1).
+          let quoteIndex = totalFrases - count;
+
+          // Garante que o índice esteja dentro dos limites do array
+          if (quoteIndex < 0) {
+            quoteIndex = 0; // Se os dias úteis forem mais que o número de frases, exibe a primeira
+          } else if (quoteIndex >= totalFrases) {
+            quoteIndex = totalFrases - 1; // Se os dias úteis forem menos que 1, exibe a última
+          }
+          document.getElementById("motivationalQuote").textContent =
+            frases[quoteIndex];
+        } else {
+          document.getElementById("motivationalQuote").textContent =
+            "Nenhuma frase disponível.";
+        }
+      }
+
+      // Chama a função displayResults quando a janela é totalmente carregada
+      window.onload = displayResults;
+
+      // Opcional: Atualizar o contador a cada minuto (descomente se desejar atualização automática)
+      // setInterval(displayResults, 60 * 1000);
     </script>
-</body>
+  </body>
 </html>
