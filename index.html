@@ -24,6 +24,7 @@
             <p class="font-bold text-2xl" id="businessDaysCount">
                 Calculando...
             </p>
+            <p class="timer-display font-bold"></p>
         </div>
         <!-- Área de exibição da frase motivacional -->
         <div class="bg-gray-100 border-l-4 border-gray-500 text-black p-4 rounded-md">
@@ -34,6 +35,66 @@
     </div>
 
     <script>
+
+        // TIMER
+        document.addEventListener('DOMContentLoaded', function() {
+        const timerDisplay = document.querySelector('.timer-display')
+
+    function startTimer() {
+        // Define o horário de início (8:00:00)
+        const now = new Date();
+        const startTime = new Date();
+        startTime.setHours(8, 0, 0, 0);
+
+        // Se já passou das 8h, define para 8h do próximo dia
+        if (now > startTime) {
+            startTime.setDate(startTime.getDate() + 1);
+        }
+
+        // Duração do temporizador: 4 horas (em milissegundos)
+        const endTime = new Date();
+        endTime.setHours(12, 0, 0, 0); // 12:00:00
+
+        function updateTimer() {
+            const currentTime = new Date().getTime();
+            const timeLeft = endTime - currentTime;
+
+            if (timeLeft <= 0) {
+                // Temporizador terminou, reinicia no próximo dia
+                startTimer();
+                return;
+            }
+
+            // Calcula horas, minutos e segundos restantes
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            // Formata o tempo com dois dígitos
+            const formattedTime = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            // Atualiza o display
+            timerDisplay.textContent = `${formattedTime}`;
+
+            // Verifica se é hora de reiniciar (próximo dia às 8h)
+            const nextStart = new Date(startTime);
+            nextStart.setDate(startTime.getDate() + 1);
+            if (currentTime >= nextStart.getTime()) {
+                startTimer();
+                return;
+            }
+        }
+
+        // Atualiza o temporizador a cada segundo
+        updateTimer();
+        const timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Inicia o temporizador
+    startTimer();
+});
+        //  /TIMER
         let frases = []; // Variável para armazenar as frases carregadas
 
         /**
