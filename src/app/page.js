@@ -1,19 +1,21 @@
 "use client";
 
-import { useEffect, useState } from 'react'; // Import useEffect and useState
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [motivationalQuote, setMotivationalQuote] = useState("Carregando frase...");
+  const [motivationalQuote, setMotivationalQuote] = useState(
+    "Carregando frase..."
+  );
   const [businessDaysCount, setBusinessDaysCount] = useState("Calculando...");
-  const [timerDisplay, setTimerDisplay] = useState("");
+  const [timerDisplay, setTimerDisplay] = useState(""); // Inicialmente vazio para não aparecer
 
   useEffect(() => {
-    let frases = []; // This will be local to the effect scope
+    let frases = [];
 
     async function loadFrases() {
       try {
         const response = await fetch("/frases.json");
-        frases = await response.json(); // Assign to the local 'frases'
+        frases = await response.json();
       } catch (error) {
         console.error("Erro ao carregar as frases:", error);
         setMotivationalQuote("Não foi possível carregar as frases.");
@@ -23,18 +25,21 @@ export default function Home() {
     function isBusinessDay(date) {
       const dayOfWeek = date.getDay(); // 0 = Domingo, 6 = Sábado
       const year = date.getFullYear();
-      const month = date.getMonth(); // 0 = Janeiro, 11 = Dezembro (ex: Junho é 5, Agosto é 7)
+      const month = date.getMonth(); // 0 = Janeiro, 11 = Dezembro
       const day = date.getDate();
 
       if (dayOfWeek === 0 || dayOfWeek === 6) {
         return false;
       }
 
+      // Período de férias conforme o código original
       if (year === 2025 && month === 7 && day >= 11 && day <= 31) {
+        // Mês 7 é Agosto
         return false;
       }
 
       if (year === 2025 && month === 8 && day <= 10) {
+        // Mês 8 é Setembro
         return false;
       }
 
@@ -43,19 +48,17 @@ export default function Home() {
 
     function calculateBusinessDays() {
       const today = new Date();
-      const now = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      const endDate = new Date(2025, 9, 20);
+      const endDate = new Date(2025, 9, 20); // Outubro 20, 2025 (Mês 9 é Outubro)
       endDate.setHours(0, 0, 0, 0);
 
       let businessDays = 0;
-      let startDateForCounting = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      );
+      let startDateForCounting = new Date(today);
 
-      if (now.getHours() >= 12 && isBusinessDay(startDateForCounting)) {
+      // Se a hora atual for 12 PM ou depois E hoje for dia útil,
+      // a contagem começa a partir do próximo dia útil.
+      if (new Date().getHours() >= 12 && isBusinessDay(startDateForCounting)) {
         startDateForCounting.setDate(startDateForCounting.getDate() + 1);
       }
 
@@ -67,12 +70,11 @@ export default function Home() {
         }
         currentDate.setDate(currentDate.getDate() + 1);
       }
-
       return businessDays;
     }
 
     async function displayResults() {
-      await loadFrases(); // Load phrases here
+      await loadFrases();
 
       const count = calculateBusinessDays();
       setBusinessDaysCount(`${count} DIAS`);
@@ -92,75 +94,105 @@ export default function Home() {
       }
     }
 
-    // Timer logic (this part remains largely the same, but updates state)
-    function startTimer() {
+    // --- Lógica do Timer Corrigida ---
+    let timerInterval;
+
+    function manageTimer() {
       const now = new Date();
-      const startTime = new Date();
+      const currentHour = now.getHours();
+
+      // Definir horários de início e fim para o timer
+      const startTime = new Date(now);
       startTime.setHours(8, 0, 0, 0);
 
-      if (now > startTime) {
-        startTime.setDate(startTime.getDate() + 1);
-      }
-
-      const endTime = new Date();
+      const endTime = new Date(now);
       endTime.setHours(12, 0, 0, 0);
 
-      function updateTimer() {
-        const currentTime = new Date().getTime();
-        const timeLeft = endTime - currentTime;
-
-        if (timeLeft <= 0) {
-          startTimer();
-          return;
+      // Se o timer estiver dentro do período (8h-12h) e não for um fim de semana
+      if (currentHour >= 8 && currentHour < 12 && isBusinessDay(now)) {
+        // Se já existe um intervalo, limpa para evitar múltiplos timers
+        if (timerInterval) {
+          clearInterval(timerInterval);
         }
 
-        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-        const minutes = Math.floor(
-          (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        const updateTimerDisplay = () => {
+          const currentTime = new Date();
+          const timeLeft = endTime.getTime() - currentTime.getTime();
 
-        const formattedTime = `${String(hours).padStart(2, "0")}:${String(
-          minutes
-        ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+          if (timeLeft <= 0) {
+            // Timer terminou para o dia, limpa o display e o intervalo
+            setTimerDisplay("");
+            clearInterval(timerInterval);
+            // Poderíamos chamar manageTimer novamente para reavaliar (ex: para o próximo dia)
+            // Mas para este caso, o timer simplesmente para até o próximo dia na hora certa.
+            return;
+          }
 
-        setTimerDisplay(formattedTime);
+          const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+          const minutes = Math.floor(
+            (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-        const nextStart = new Date(startTime);
-        nextStart.setDate(startTime.getDate() + 1);
-        if (currentTime >= nextStart.getTime()) {
-          startTimer();
-          return;
+          const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+            minutes
+          ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+          setTimerDisplay(formattedTime);
+        };
+
+        // Chama a função imediatamente e depois configura o intervalo
+        updateTimerDisplay();
+        timerInterval = setInterval(updateTimerDisplay, 1000);
+      } else {
+        // Fora do período, limpa o display e o intervalo (se houver)
+        setTimerDisplay("");
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null; // Garante que a variável do intervalo seja limpa
         }
       }
-
-      updateTimer();
-      const timerInterval = setInterval(updateTimer, 1000);
-
-      return () => clearInterval(timerInterval); // Cleanup
     }
 
-    // Call functions when component mounts
-    displayResults();
-    startTimer();
+    // Inicializa a lógica do timer.
+    // Usamos setInterval aqui para que `manageTimer` seja chamada a cada segundo
+    // e possa ligar/desligar o timer principal no momento certo (8h e 12h).
+    const overallTimerCheck = setInterval(manageTimer, 1000);
 
-  }, []); // Empty dependency array means this runs once on mount
+    // Chama as funções principais na montagem do componente
+    displayResults();
+
+    // Cleanup function para limpar todos os intervalos quando o componente for desmontado
+    return () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+      if (overallTimerCheck) {
+        clearInterval(overallTimerCheck);
+      }
+    };
+  }, []);
 
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">FIM DA CLT</h1>
         <div
-          className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-6"
+          className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-6"
           role="alert"
         >
-          <p className="font-bold text-2xl" id="businessDaysCount">{businessDaysCount}</p>
-          <p className="timer-display font-bold">{timerDisplay}</p>
+          <p className="font-bold text-2xl" id="businessDaysCount">
+            {businessDaysCount}
+          </p>
+          {/* Renderiza o timerDisplay apenas se ele não estiver vazio */}
+          {timerDisplay && (
+            <p className="timer-display font-bold">{timerDisplay}</p>
+          )}
         </div>
-        <div
-          className="bg-gray-100 border-l-4 border-gray-500 text-black p-4 rounded-md"
-        >
-          <p className="text-lg italic" id="motivationalQuote">{motivationalQuote}</p>
+        <div className="bg-gray-100 border-l-4 border-gray-500 text-black p-4 rounded-md">
+          <p className="text-lg italic" id="motivationalQuote">
+            {motivationalQuote}
+          </p>
         </div>
       </div>
     </div>
