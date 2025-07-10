@@ -175,7 +175,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full text-center">
+      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-[80%] text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">FIM DA CLT</h1>
         <div
           className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-6"
