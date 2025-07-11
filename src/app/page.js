@@ -33,13 +33,7 @@ export default function Home() {
       }
 
       // Período de férias conforme o código original
-      if (year === 2025 && month === 7 && day >= 11 && day <= 31) {
-        // Mês 7 é Agosto
-        return false;
-      }
-
-      if (year === 2025 && month === 8 && day <= 10) {
-        // Mês 8 é Setembro
+      if (year === 2025 && month === 8) {
         return false;
       }
 
