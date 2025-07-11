@@ -172,7 +172,7 @@ export default function Home() {
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-[80%] text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">FIM DA CLT</h1>
         <div
-          className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-6"
+          className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 rounded-md mb-6"
           role="alert"
         >
           <p className="font-bold text-2xl" id="businessDaysCount">
