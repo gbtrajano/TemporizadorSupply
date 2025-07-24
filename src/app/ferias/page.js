@@ -21,7 +21,7 @@ export default function Home() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const endDate = new Date(2025, 8, 1); // Outubro 20, 2025 (Mês 9 é Outubro)
+      const endDate = new Date(2025, 8, 14); // Outubro 20, 2025 (Mês 9 é Outubro)
       endDate.setHours(0, 0, 0, 0);
 
       let businessDays = 0;
@@ -133,7 +133,7 @@ export default function Home() {
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-[80%] text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">FÉRIAS</h1>
         <div
-          className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-6"
+          className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 rounded-md mb-6"
           role="alert"
         >
           <p className="font-bold text-2xl" id="businessDaysCount">
