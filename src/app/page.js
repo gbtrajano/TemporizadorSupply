@@ -37,6 +37,11 @@ export default function Home() {
         return false;
       }
 
+      // Período de férias conforme o código original
+      if (year === 2025 && month === 6 && day === 29) {
+        return false;
+      }
+
       return true;
     }
 

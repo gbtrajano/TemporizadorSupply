@@ -21,7 +21,7 @@ export default function Home() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const endDate = new Date(2025, 8, 14); // Outubro 20, 2025 (Mês 9 é Outubro)
+      const endDate = new Date(2025, 8, 12); // Outubro 20, 2025 (Mês 9 é Outubro)
       endDate.setHours(0, 0, 0, 0);
 
       let businessDays = 0;
