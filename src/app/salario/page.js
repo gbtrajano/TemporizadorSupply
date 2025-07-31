@@ -33,7 +33,7 @@ function getFifthBusinessDay(date) {
   return null; // Should not happen in a typical month
 }
 
-export default function salario() {
+export default function Home() {
   const [salaryDaysCount, setSalaryDaysCount] = useState("Calculando...");
 
   useEffect(() => {
