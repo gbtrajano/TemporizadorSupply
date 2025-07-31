@@ -1,13 +1,10 @@
 "use client";
 
-// New component file: SalaryCountdown.js
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 function isBusinessDayForSalary(date) {
-  const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
-  // In this new rule, Saturday is a business day
-  return dayOfWeek !== 0; // Excludes only Sunday
+  const dayOfWeek = date.getDay();
+  return dayOfWeek !== 0;
 }
 
 function getFifthBusinessDay(date) {
@@ -18,55 +15,48 @@ function getFifthBusinessDay(date) {
     if (isBusinessDayForSalary(currentDate)) {
       businessDaysCount++;
     }
-    // If we've found the 5th business day
+
     if (businessDaysCount === 5) {
-      // Check the special Saturday rule
       if (currentDate.getDay() === 6) {
-        // 6 = Saturday
-        // Payday is the preceding Friday
         currentDate.setDate(currentDate.getDate() - 1);
       }
       return currentDate;
     }
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  return null; // Should not happen in a typical month
+  return null;
+}
+
+function calculateDaysToSalary() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let fifthBusinessDay = getFifthBusinessDay(today);
+
+  if (today.getTime() > fifthBusinessDay.getTime()) {
+    const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    fifthBusinessDay = getFifthBusinessDay(nextMonth);
+  }
+
+  let count = 0;
+  let currentDate = new Date(today);
+
+  while (currentDate.getTime() <= fifthBusinessDay.getTime()) {
+    count++;
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count - 1;
 }
 
 export default function Home() {
   const [salaryDaysCount, setSalaryDaysCount] = useState("Calculando...");
 
+  const daysToSalary = useMemo(() => calculateDaysToSalary(), []);
+
   useEffect(() => {
-    function calculateDaysToSalary() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      let fifthBusinessDay = getFifthBusinessDay(today);
-
-      // If the 5th business day of the current month has already passed,
-      // calculate for the next month
-      if (today.getTime() > fifthBusinessDay.getTime()) {
-        const nextMonth = new Date(
-          today.getFullYear(),
-          today.getMonth() + 1,
-          1
-        );
-        fifthBusinessDay = getFifthBusinessDay(nextMonth);
-      }
-
-      let count = 0;
-      let currentDate = new Date(today);
-
-      while (currentDate.getTime() <= fifthBusinessDay.getTime()) {
-        count++;
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      return count - 1; // Subtract 1 because we're counting until the day before payday
-    }
-
-    setSalaryDaysCount(`${calculateDaysToSalary()} DIAS`);
-  }, []);
+    setSalaryDaysCount(`${daysToSalary} DIAS`);
+  }, [daysToSalary]);
 
   return (
     <div className="flex items-center justify-center h-screen">
