@@ -16,7 +16,8 @@ export function isBusinessDay(date) {
     year === 2025 &&
     (
       (month === 8 && day >= 8 && day <= 30) || // Setembro
-      (month === 9 && day >= 1 && day <= 7) // Outubro
+      (month === 9 && day >= 1 && day <= 7) || // Outubro
+      (month === 9 && day === 20)
     )
   );
 
