@@ -26,3 +26,37 @@ export function isBusinessDay(date) {
 
   return true;
 }
+
+
+
+export function calculateBusinessDays(isFeriasPage = false) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // A data final agora depende se a contagem é para férias ou para o fim do contrato
+  const endDate = isFeriasPage ? new Date(2025, 8, 7) : new Date(2025, 9, 21);
+  endDate.setHours(0, 0, 0, 0);
+
+  let businessDays = 0;
+  let startDateForCounting = new Date(today);
+
+  if (new Date().getHours() >= 12) {
+    startDateForCounting.setDate(startDateForCounting.getDate() + 1);
+  }
+
+  let currentDate = new Date(startDateForCounting);
+
+  while (currentDate <= endDate) {
+    if (isFeriasPage) {
+      if (isBusinessDayForFerias(currentDate)) {
+        businessDays++;
+      }
+    } else {
+      if (isBusinessDay(currentDate)) {
+        businessDays++;
+      }
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  return businessDays;
+}
